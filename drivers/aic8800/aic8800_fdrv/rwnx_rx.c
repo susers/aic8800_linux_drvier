@@ -2368,7 +2368,11 @@ check_len_update:
         hdr = (struct ieee80211_hdr *)(skb->data + msdu_offset);
         rwnx_vif = rwnx_rx_get_vif(rwnx_hw, hw_rxhdr->flags_vif_idx);
         if (rwnx_vif) {
+#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 17, 0)
+            cfg80211_rx_spurious_frame(rwnx_vif->ndev, hdr->addr2, -1, GFP_ATOMIC);
+#else
             cfg80211_rx_spurious_frame(rwnx_vif->ndev, hdr->addr2, GFP_ATOMIC);
+#endif
         }
         goto end;
     }
@@ -2619,7 +2623,11 @@ check_len_update:
 
                 if (hw_rxhdr->flags_is_4addr && !rwnx_vif->use_4addr) {
                     cfg80211_rx_unexpected_4addr_frame(rwnx_vif->ndev,
-                                                       sta->mac_addr, GFP_ATOMIC);
+                                                       sta->mac_addr,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 17, 0)
+							-1,
+#endif
+							GFP_ATOMIC);
                 }
             }
 
