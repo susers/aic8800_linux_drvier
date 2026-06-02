@@ -1,4 +1,4 @@
-# aic8800_linux_drvier
+# aic8800_linux_driver
 
 - To switch usb mode:
 
